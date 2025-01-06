@@ -1,1 +1,2 @@
-# taipy-capstone-project
+# Taipy Capstone Project
+
