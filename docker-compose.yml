@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  stackup-assistant:
+    build: .
+    container_name: stackup-assistant
+    ports:
+      - "60675:60675"
+    environment:
+      - NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}
+      - HF_TOKEN=${HF_TOKEN}
+      - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY}
+    volumes:
+      - ./Taipy:/app/Taipy  # Mount the Taipy folder (if you want it to persist or modify easily)
+    networks:
+      - taipy-network
+    command: python main.py  # Start your main script
+  
+  ngrok:
+    image: wernight/ngrok
+    container_name: ngrok
+    environment:
+      - NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}
+      - NGROK_PORT=60675  # Expose Flask server port to Ngrok
+    ports:
+      - "4040:4040"  # This is the default Ngrok web interface to view tunnels
+    networks:
+      - taipy-network
+
+networks:
+  taipy-network:
+    driver: bridge
+
