@@ -14,13 +14,16 @@ RUN apt-get update && \
 RUN git clone https://github.com/Dovineowuor/Taipy
 
 # Install pip dependencies
+RUN pip install --upgrade pip
 COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt -i https://pypi.org/simple
 
 # Set environment variables for the ngrok token (you can update this later in your script)
-ENV NGROK_AUTH_TOKEN='your_ngrok_token_here'
-ENV HF_TOKEN='your_hf_token_here'
-ENV GOOGLE_AI_API_KEY='your_google_ai_api_key_here'
+# Copy the .env file to the working directory
+COPY .env /app/.env
+
+# Use the contents of the .env file to set environment variables
+RUN export $(cat /app/.env | xargs)
 
 # Expose the port that the Flask app will run on
 EXPOSE 60675
