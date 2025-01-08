@@ -8,10 +8,12 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y \
     git \
+    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone the Taipy repository and install dependencies
-RUN git clone https://github.com/Dovineowuor/Taipy
+# RUN git clone https://github.com/Dovineowuor/Taipy
+COPY Taipy /app
 
 # Install pip dependencies
 RUN pip install --upgrade pip
@@ -31,5 +33,5 @@ EXPOSE 60675
 # Copy the rest of your application
 COPY . /app
 
-# Run the app (you should have a main.py script in the current directory)
+# Command to run the application
 CMD ["python", "main.py"]
