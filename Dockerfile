@@ -15,6 +15,9 @@ RUN apt-get update && \
 # Clone the Taipy repository and install dependencies
 COPY Taipy /app
 
+# Clone the Taipy repository and install dependencies
+# RUN git clone https://github.com/dovineowuor/Taipy.git /app
+
 # Install pip dependencies
 RUN pip install --upgrade pip
 COPY requirements.txt /app/requirements.txt
