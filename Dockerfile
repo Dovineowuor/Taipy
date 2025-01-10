@@ -13,10 +13,10 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone the Taipy repository and install dependencies
-COPY Taipy /app
+# COPY Taipy /app
 
 # Clone the Taipy repository and install dependencies
-# RUN git clone https://github.com/dovineowuor/Taipy.git /app
+RUN git clone https://github.com/dovineowuor/Taipy.git /app
 
 # Install pip dependencies
 RUN pip install --upgrade pip
