@@ -30,7 +30,7 @@ except Exception as e:
 # Create Document Index
 index = VectorstoreIndexCreator(
     embedding=HuggingFaceEmbeddings(),
-    text_splitter=CharacterTextSplitter(chunk_size=1000, chunk_overlap=0),
+    text_splitter=CharacterTextSplitter(chunk_size=1000, chunk_overlap=200),
 ).from_documents(docs)
 
 # Configure LLM and Retrieval Chain
