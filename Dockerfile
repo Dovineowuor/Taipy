@@ -1,3 +1,4 @@
+# filepath: /Users/dove/Work/taipy/Dockerfile
 # Use the official Python 3.10 slim image
 FROM python:3.10-slim
 
@@ -12,16 +13,14 @@ RUN apt-get update && \
     file \
     && rm -rf /var/lib/apt/lists/*
 
-# Clone the Taipy repository and install dependencies
+# Copy the Taipy repository and install dependencies
 COPY Taipy /app
-
-# Clone the Taipy repository and install dependencies
-# RUN git clone https://github.com/dovineowuor/Taipy.git /app
 
 # Install pip dependencies
 RUN pip install --upgrade pip
 COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt -i https://pypi.org/simple
+RUN pip install --no-cache-dir -r /app/requirements.txt && \
+    rm -rf /root/.cache/pip
 
 # Expose the port that the Flask app will run on
 EXPOSE 60675
@@ -30,4 +29,4 @@ EXPOSE 60675
 COPY . /app
 
 # Command to run the application
-CMD ["python", "main.py"]
+CMD ["taipy", "run", "main.py", "--use-reloader"]
