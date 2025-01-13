@@ -30,7 +30,7 @@ except Exception as e:
 # Create Document Index
 index = VectorstoreIndexCreator(
     embedding=HuggingFaceEmbeddings(),
-    text_splitter=CharacterTextSplitter(chunk_size=1000, chunk_overlap=200),
+    text_splitter=CharacterTextSplitter(chunk_size=4000, chunk_overlap=200),
 ).from_documents(docs)
 
 # Configure LLM and Retrieval Chain
@@ -138,4 +138,4 @@ with tgb.Page() as page:
 
 # Initialize and Run GUI
 gui = Gui(page=page)
-gui.run(on_init=initialize_chat)
+gui.run(on_init=initialize_chat, host="0.0.0.0", port=5000)

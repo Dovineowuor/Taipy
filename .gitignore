@@ -125,3 +125,11 @@ cython_debug/
 
 # Taipy specific
 .taipy/
+*.tar.gz
+*.gz
+*.zip
+*.tgz
+*.bz2
+*.xz
+*.zst
+*.lzma

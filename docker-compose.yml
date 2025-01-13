@@ -6,9 +6,8 @@ services:
     volumes:
       - .:/app
     ports:
-      - "60675:60675"
+      - "5000:5000"  # This exposes the container's port 5000 to the host's port 5000
     environment:
       - HF_TOKEN=${HF_TOKEN}
       - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY}
-    command: ["python", "main.py"]
-    
+    command: ["python", "main.py", "--host", "0.0.0.0", "--port", "5000"]
