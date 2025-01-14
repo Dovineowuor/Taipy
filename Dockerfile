@@ -36,3 +36,5 @@ COPY . /app
 
 # Command to run the application
 CMD ["taipy", "run", "main.py", "--use-reloader", "--host", "0.0.0.0", "--port", "5000"]
+# "taipy", "run", "main.py", "--use-reloader", "--host", "0.0.0.0", "--port", "5000"
+# taipy run main.py --use-reloader --host 0.0.0.0 --port 5000

@@ -12,6 +12,7 @@ from taipy.gui import Gui, notify
 
 # Load Environment Variables
 load_dotenv()
+GOOGLE_AI_API_KEY = os.getenv("GOOGLE_AI_API_KEY")
 if not os.getenv("GOOGLE_AI_API_KEY"):
     raise ValueError("Environment variables not loaded correctly. Check .env file.")
 
@@ -48,27 +49,26 @@ chain = RetrievalQA.from_chain_type(
     input_key="question",
 )
 
-# Query Function
+# Define the function to query the LLM
 def query_llm(query_message):
-    """Query the LLM with a user-provided message."""
-    try:
-        return chain.run(query_message)
-    except Exception as e:
-        return f"Error processing your request: {e}"
+    return chain.run(query_message)
 
-# Helper Functions
-def initialize_chat(state):
-    """Initialize the chat with a welcome message."""
+# Initialize chatbot state variables
+query_message = ""
+messages = []
+messages_dict = {}
+
+def on_init(state):
     state.messages = [
         {
             "style": "assistant_message",
             "content": "Hi, I am StackUp assistant! How can I help you today?",
         },
     ]
-    update_conversation(state)
+    new_conv = create_conv(state)
+    state.conv.update_content(state, new_conv)
 
-def update_conversation(state):
-    """Update the conversation display in the GUI."""
+def create_conv(state):
     messages_dict = {}
     with tgb.Page() as conversation:
         for i, message in enumerate(state.messages):
@@ -80,41 +80,32 @@ def update_conversation(state):
                 mode="md",
             )
     state.messages_dict = messages_dict
-    state.conv.update_content(state, conversation)
+    return conversation
 
 def send_message(state):
-    """Handle user message input and LLM response."""
-    if not state.query_message.strip():
-        notify(state, "warning", "Please enter a message before sending.")
-        return
-
-    # Add user message
     state.messages.append(
         {
             "style": "user_message",
             "content": state.query_message,
         }
     )
-    update_conversation(state)
-
-    # Query the LLM and add the assistant's response
-    notify(state, "info", "Processing your message...")
-    response = query_llm(state.query_message)
+    state.conv.update_content(state, create_conv(state))
+    notify(state, "info", "Sending message...")
+    assistant_response = query_llm(state.query_message)
     state.messages.append(
         {
             "style": "assistant_message",
-            "content": response,
+            "content": assistant_response,
         }
     )
-    update_conversation(state)
+    state.conv.update_content(state, create_conv(state))
     state.query_message = ""
 
 def reset_chat(state):
-    """Reset the chat to start a new conversation."""
-    state.messages.clear()
-    initialize_chat(state)
+    state.query_message = ""
+    on_init(state)
 
-# Define GUI Layout
+# Design the GUI layout
 with tgb.Page() as page:
     with tgb.layout(columns="350px 1"):
         with tgb.part(class_name="sidebar"):
@@ -136,6 +127,8 @@ with tgb.Page() as page:
                     class_name="fullwidth",
                 )
 
-# Initialize and Run GUI
-gui = Gui(page=page)
-gui.run(on_init=initialize_chat, host="0.0.0.0", port=5000)
+# Start the GUI with unsafe werkzeug settings
+gui = Gui(page)
+conv = gui.add_partial("")
+gui.run(title="StackUp Assistant", dark_mode=False, margin="0px", debug=False, 
+        port=5000, allow_unsafe_werkzeug=True, use_reloader=True, conv=conv,)
